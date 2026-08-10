@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>応募管理</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;color:#222;background:#f5f7fa}
+body{margin:0;padding:16px} .wrap{max-width:1200px;margin:auto}
+h1{margin:0 0 12px} .sub{color:#666;font-size:13px;margin-bottom:16px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.card{background:white;border-radius:12px;padding:12px;box-shadow:0 1px 5px #0001}
+.card b{display:block;font-size:22px;margin-top:4px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+button,.filter{border:0;border-radius:9px;padding:9px 12px;background:#fff;box-shadow:0 1px 4px #0002;cursor:pointer}
+button.primary{background:#2563eb;color:#fff} button.danger{background:#fee2e2}
+.tablebox{background:white;border-radius:12px;overflow:auto;box-shadow:0 1px 5px #0001}
+table{border-collapse:collapse;width:100%;min-width:920px}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
+th{background:#f1f5f9;position:sticky;top:0;z-index:1}
+input[type="text"],input[type="datetime-local"],select{padding:7px;border:1px solid #d1d5db;border-radius:7px}
+input[type="checkbox"]{width:22px;height:22px}
+tr.applied{background:#ecfdf5} tr.wait{background:#fffbeb} tr.win{background:#eff6ff} tr.lose{background:#fef2f2}
+a{color:#2563eb;text-decoration:none;font-weight:600}
+.notice{font-size:12px;color:#666;margin-top:10px}
+@media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}body{padding:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>📋 応募管理</h1>
+<div class="sub">応募済みにチェックするだけ。入力内容はこのブラウザに自動保存されます。</div>
+
+<div class="cards">
+  <div class="card">店舗数<b id="total">9</b></div>
+  <div class="card">🟢 応募済<b id="appliedCount">0</b></div>
+  <div class="card">🔴 未応募<b id="notAppliedCount">9</b></div>
+  <div class="card">🏆 当選<b id="winCount">0</b></div>
+  <div class="card">🟡 結果待ち<b id="waitCount">0</b></div>
+</div>
+
+<div class="toolbar">
+  <button class="primary" onclick="showAll()">全て表示</button>
+  <button onclick="showUnapplied()">未応募だけ</button>
+  <button onclick="showApplied()">応募済だけ</button>
+  <button onclick="openForm()">🔗 応募フォームを開く</button>
+  <button onclick="exportCSV()">CSV出力</button>
+  <button class="danger" onclick="resetAll()">データをリセット</button>
+</div>
+
+<div class="tablebox">
+<table>
+<thead><tr><th>応募先</th><th>応募済</th><th>応募日時</th><th>結果</th><th>応募フォーム</th><th>メモ</th></tr></thead>
+<tbody><tr data-store="ラジオ会館">
+      <td class="store">ラジオ会館</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="ラジオ会館 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="AKIHABARAゲーマーズB1店">
+      <td class="store">AKIHABARAゲーマーズB1店</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="AKIHABARAゲーマーズB1店 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="所沢店">
+      <td class="store">所沢店</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="所沢店 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="高崎店">
+      <td class="store">高崎店</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="高崎店 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="池袋">
+      <td class="store">池袋</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="池袋 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="宇都宮">
+      <td class="store">宇都宮</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="宇都宮 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="マルイ海老名">
+      <td class="store">マルイ海老名</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="マルイ海老名 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="津田沼">
+      <td class="store">津田沼</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="津田沼 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr>
+<tr data-store="カードラボ甲府">
+      <td class="store">カードラボ甲府</td>
+      <td class="check"><input type="checkbox" class="applied" aria-label="カードラボ甲府 応募済"></td>
+      <td><input type="datetime-local" class="datetime"></td>
+      <td>
+        <select class="result">
+          <option>未確認</option><option>結果待ち</option><option>当選</option><option>落選</option>
+        </select>
+      </td>
+      <td><a href="https://forms.gle/BFZUx4Q9tZvAFYvG7" target="_blank" rel="noopener">応募フォーム ↗</a></td>
+      <td><input type="text" class="memo" placeholder="メモ"></td>
+    </tr></tbody>
+</table>
+</div>
+<div class="notice">保存先はこの端末・このブラウザのローカル保存領域です。別端末とは自動同期しません。</div>
+</div>
+
+<script>
+const KEY="radio_kanban_apply_v1";
+const formUrl='https://forms.gle/BFZUx4Q9tZvAFYvG7';
+const trs=[...document.querySelectorAll("tbody tr")];
+
+function save(){
+ const data=trs.map(tr=>({
+   store:tr.dataset.store,
+   applied:tr.querySelector(".applied").checked,
+   datetime:tr.querySelector(".datetime").value,
+   result:tr.querySelector(".result").value,
+   memo:tr.querySelector(".memo").value
+ }));
+ localStorage.setItem(KEY,JSON.stringify(data));
+ update();
+}
+function load(){
+ const raw=localStorage.getItem(KEY);
+ if(raw){
+   const data=JSON.parse(raw);
+   data.forEach(d=>{
+     const tr=trs.find(x=>x.dataset.store===d.store); if(!tr)return;
+     tr.querySelector(".applied").checked=!!d.applied;
+     tr.querySelector(".datetime").value=d.datetime||"";
+     tr.querySelector(".result").value=d.result||"未確認";
+     tr.querySelector(".memo").value=d.memo||"";
+   });
+ }
+ trs.forEach(tr=>tr.querySelectorAll("input,select").forEach(el=>el.addEventListener("change",save)));
+ update();
+}
+function update(){
+ let a=0,w=0,win=0;
+ trs.forEach(tr=>{
+   const checked=tr.querySelector(".applied").checked;
+   const r=tr.querySelector(".result").value;
+   tr.className=checked?"applied":"";
+   if(r==="結果待ち"){tr.classList.add("wait");w++}
+   if(r==="当選"){tr.classList.add("win");win++}
+   if(r==="落選")tr.classList.add("lose");
+   if(checked)a++;
+ });
+ document.getElementById("appliedCount").textContent=a;
+ document.getElementById("notAppliedCount").textContent=trs.length-a;
+ document.getElementById("waitCount").textContent=w;
+ document.getElementById("winCount").textContent=win;
+}
+function filter(fn){trs.forEach(tr=>tr.style.display=fn(tr)?"":"none")}
+function showAll(){filter(()=>true)}
+function showUnapplied(){filter(tr=>!tr.querySelector(".applied").checked)}
+function showApplied(){filter(tr=>tr.querySelector(".applied").checked)}
+function openForm(){window.open(formUrl,"_blank","noopener")}
+function resetAll(){if(confirm("保存している応募状況を全て消します。よろしいですか？")){localStorage.removeItem(KEY);location.reload()}}
+function exportCSV(){
+ const head=["応募先","応募済","応募日時","結果","応募フォームURL","メモ"];
+ const data=trs.map(tr=>[
+   tr.dataset.store,
+   tr.querySelector(".applied").checked?"応募済":"未応募",
+   tr.querySelector(".datetime").value,
+   tr.querySelector(".result").value,
+   formUrl,
+   tr.querySelector(".memo").value
+ ]);
+ const esc=v=>'"'+String(v).replaceAll('"','""')+'"';
+ const csv="\uFEFF"+[head,...data].map(r=>r.map(esc).join(",")).join("\n");
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="応募管理.csv";a.click();
+}
+load();
+</script>
+</body>
+</html>
